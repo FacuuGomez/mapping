@@ -28,10 +28,6 @@ const App = () => {
 	const [heatmapData, setHeatmapData] = useState<google.maps.LatLng[]>([]);
 	const [showHeatmap, setShowHeatmap] = useState<boolean>(false);
 
-	const toggleHeatmap = () => {
-		setShowHeatmap((prev) => !prev);
-	};
-
 	const { isLoaded } = useJsApiLoader({
 		googleMapsApiKey,
 		libraries: ['places', 'geometry', 'visualization'],
@@ -120,33 +116,44 @@ const App = () => {
 		dataLayer.setMap(map);
 	}, []);
 
-	const addHeatmapData = useCallback(() => {
-		if (!isLoaded || !google) {
-			console.warn('Google Maps API no está cargada');
-			return;
-		}
+	const toggleHeatmap = () => {
+		if (heatmapData.length === 0) {
+			const newHeatmapData = [
+				new google.maps.LatLng(-36.6167, -64.2833),
+				new google.maps.LatLng(-35.4167, -63.2833),
+				new google.maps.LatLng(-36.1667, -63.6667),
+				new google.maps.LatLng(-36.7333, -62.9667),
+				new google.maps.LatLng(-35.65, -63.1167),
+				new google.maps.LatLng(-36.5, -63.15),
+				new google.maps.LatLng(-36.9, -64.3667),
+				new google.maps.LatLng(-35.8833, -63.3167),
+				new google.maps.LatLng(-36.0333, -63.8833),
+				new google.maps.LatLng(-37.0333, -64.15),
+				new google.maps.LatLng(-35.7667, -63.75),
+				new google.maps.LatLng(-37.3667, -64.3667),
+				new google.maps.LatLng(-35.9167, -63.85),
+				new google.maps.LatLng(-37.1167, -63.9333),
+				new google.maps.LatLng(-35.3667, -63.5333),
+				new google.maps.LatLng(-36.25, -63.8),
+				new google.maps.LatLng(-37.2167, -64.0167),
+			];
+			setHeatmapData(newHeatmapData);
 
-		const newHeatmapData = [
-			new google.maps.LatLng(-36.6167, -64.2833),
-			new google.maps.LatLng(-35.4167, -63.2833),
-			new google.maps.LatLng(-36.1667, -63.6667),
-			new google.maps.LatLng(-36.7333, -62.9667),
-			new google.maps.LatLng(-35.65, -63.1167),
-			new google.maps.LatLng(-36.5, -63.15),
-			new google.maps.LatLng(-36.9, -64.3667),
-			new google.maps.LatLng(-35.8833, -63.3167),
-			new google.maps.LatLng(-36.0333, -63.8833),
-			new google.maps.LatLng(-37.0333, -64.15),
-			new google.maps.LatLng(-35.7667, -63.75),
-			new google.maps.LatLng(-37.3667, -64.3667),
-			new google.maps.LatLng(-35.9167, -63.85),
-			new google.maps.LatLng(-37.1167, -63.9333),
-			new google.maps.LatLng(-35.3667, -63.5333),
-			new google.maps.LatLng(-36.25, -63.8),
-			new google.maps.LatLng(-37.2167, -64.0167),
-		];
-		setHeatmapData(newHeatmapData);
-	}, [isLoaded]);
+			// Ajustar el centro basado en los puntos
+			const totalPoints = newHeatmapData.length;
+			const avgLat =
+				newHeatmapData.reduce((sum, point) => sum + point.lat(), 0) /
+				totalPoints;
+			const avgLng =
+				newHeatmapData.reduce((sum, point) => sum + point.lng(), 0) /
+				totalPoints;
+
+			setCenter({ lat: avgLat, lng: avgLng });
+		} else if (!showHeatmap) {
+			setHeatmapData([]);
+		}
+		setShowHeatmap((prev) => !prev);
+	};
 
 	if (!isLoaded) {
 		return <div>Loading...</div>;
@@ -160,7 +167,6 @@ const App = () => {
 				mapContainerStyle={{ width: '100%', height: '100%' }}
 				onLoad={(map) => {
 					addBoundaries(map);
-					addHeatmapData();
 				}}
 				options={{
 					zoomControl: false,
