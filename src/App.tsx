@@ -2,6 +2,7 @@ import {
 	GoogleMap,
 	HeatmapLayer,
 	InfoWindow,
+	Libraries,
 	Marker,
 	useJsApiLoader,
 } from '@react-google-maps/api';
@@ -28,9 +29,11 @@ const App = () => {
 	const [heatmapData, setHeatmapData] = useState<google.maps.LatLng[]>([]);
 	const [showHeatmap, setShowHeatmap] = useState<boolean>(false);
 
+	const libraries: Libraries = ['places', 'geometry', 'visualization'];
+
 	const { isLoaded } = useJsApiLoader({
 		googleMapsApiKey,
-		libraries: ['places', 'geometry', 'visualization'],
+		libraries,
 	});
 
 	const geocode = useCallback(
