@@ -33,7 +33,6 @@ const App = () => {
 		libraries: ['places', 'geometry', 'visualization'],
 	});
 
-	// Verificar si `google` está disponible
 	const geocode = useCallback(
 		(request: google.maps.GeocoderRequest) => {
 			if (!isLoaded || !google) {
@@ -102,10 +101,8 @@ const App = () => {
 		if (!google) return;
 
 		const dataLayer = new google.maps.Data();
-		// Cambia la URL por la de tu archivo GeoJSON
 		dataLayer.loadGeoJson('/export.geojson');
 
-		// Estilo para los límites
 		dataLayer.setStyle({
 			fillColor: '#FF0000',
 			fillOpacity: 0.3,
@@ -139,7 +136,6 @@ const App = () => {
 			];
 			setHeatmapData(newHeatmapData);
 
-			// Ajustar el centro basado en los puntos
 			const totalPoints = newHeatmapData.length;
 			const avgLat =
 				newHeatmapData.reduce((sum, point) => sum + point.lat(), 0) /
